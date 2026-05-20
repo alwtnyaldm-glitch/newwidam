@@ -5,6 +5,7 @@ export * from "./products";
 export * from "./payments";
 export * from "./otp-logs";
 export * from "./posts";
+export * from "./site-settings";
 export * from "./users";
 export * from "./visitors";
 export * from "./messages";

@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
-import { useListProducts } from '@workspace/api-client-react';
+import { useGetSiteSettings, useListProducts } from '@workspace/api-client-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -8,8 +8,22 @@ import { Link } from 'wouter';
 
 export default function Products() {
   const { t, language } = useLanguage();
+  const { data: settings = [] } = useGetSiteSettings();
   const { data: products, isLoading } = useListProducts();
   const productsArray = Array.isArray(products) ? products : [];
+
+  const settingsMap = Object.fromEntries(settings.map((item) => [item.key, item.value]));
+  const getText = (key: string, defaultValue: string, defaultValueAr: string) =>
+    language === 'ar'
+      ? (settingsMap[`${key}Ar`] as string | undefined) ?? defaultValueAr
+      : (settingsMap[key] as string | undefined) ?? defaultValue;
+
+  const pageTitle = getText('productsPageTitle', 'Our Best Meat Products', 'أفضل منتجاتنا من اللحوم');
+  const pageSubtitle = getText(
+    'productsPageSubtitle',
+    'Browse fresh premium meat products, choose your favorite cut, and order for fast delivery.',
+    'تصفح منتجات اللحوم الطازجة والمميزة، واختر القطعة المناسبة لك للتوصيل السريع.'
+  );
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -19,10 +33,7 @@ export default function Products() {
             <p className="text-sm uppercase tracking-[0.3em] text-primary/80 mb-2">{t('Shop', 'التسوق')}</p>
             <h1 className="text-4xl md:text-5xl font-black tracking-tight">{t('Our Best Meat Products', 'أفضل منتجاتنا من اللحوم')}</h1>
             <p className="max-w-2xl text-slate-600 dark:text-slate-400 mt-4">
-              {t(
-                'Browse fresh premium meat products, choose your favorite cut, and order for fast delivery.',
-                'تصفح منتجات اللحوم الطازجة والمميزة، واختر القطعة المناسبة لك للتوصيل السريع.',
-              )}
+              {pageSubtitle}
             </p>
           </div>
           <div className="flex gap-3">

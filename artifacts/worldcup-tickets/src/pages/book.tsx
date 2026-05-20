@@ -1,5 +1,6 @@
 import { useRoute, useLocation } from 'wouter';
 import { useLanguage } from '@/lib/i18n';
+import { useGetSiteSettings } from '@workspace/api-client-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -21,7 +22,22 @@ export default function Book() {
   const [, params] = useRoute('/book/:productId');
   const productId = parseInt(params?.productId || '0', 10);
   const { t, language } = useLanguage();
+  const { data: settings = [] } = useGetSiteSettings();
   const [, setLocation] = useLocation();
+
+  const settingsMap = Object.fromEntries(settings.map((item) => [item.key, item.value]));
+  const getText = (key: string, defaultValue: string, defaultValueAr: string) =>
+    language === 'ar'
+      ? (settingsMap[`${key}Ar`] as string | undefined) ?? defaultValueAr
+      : (settingsMap[key] as string | undefined) ?? defaultValue;
+
+  const customerNameLabel = getText('orderFormCustomerNameLabel', 'Full Name', 'الاسم الكامل');
+  const phoneLabel = getText('orderFormPhoneLabel', 'Phone Number', 'رقم الهاتف');
+  const deliveryAddressLabel = getText('orderFormAddressLabel', 'Delivery Address', 'عنوان التوصيل');
+  const deliveryDateLabel = getText('orderFormDateLabel', 'Delivery Date', 'موعد الاستلام');
+  const quantityLabel = getText('orderFormQuantityLabel', 'Quantity', 'الكمية');
+  const proceedButton = getText('orderFormSubmitButton', 'Proceed to Visa', 'متابعة إلى فيزا');
+  const totalAmountLabel = getText('orderFormTotalAmountLabel', 'Total Amount', 'المبلغ الإجمالي');
 
   const { data: product, isLoading } = useGetProduct(productId);
 
@@ -104,7 +120,7 @@ export default function Book() {
               name="customerName"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Full Name', 'الاسم الكامل')}</FormLabel>
+                  <FormLabel>{customerNameLabel}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -118,7 +134,7 @@ export default function Book() {
               name="phone"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Phone Number', 'رقم الهاتف')}</FormLabel>
+                  <FormLabel>{phoneLabel}</FormLabel>
                   <FormControl>
                     <Input type="tel" {...field} />
                   </FormControl>
@@ -132,7 +148,7 @@ export default function Book() {
               name="deliveryAddress"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Delivery Address', 'عنوان التوصيل')}</FormLabel>
+                  <FormLabel>{deliveryAddressLabel}</FormLabel>
                   <FormControl>
                     <Input {...field} />
                   </FormControl>
@@ -146,7 +162,7 @@ export default function Book() {
               name="deliveryDate"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Delivery Date', 'موعد الاستلام')}</FormLabel>
+                  <FormLabel>{deliveryDateLabel}</FormLabel>
                   <FormControl>
                     <Input type="date" {...field} />
                   </FormControl>
@@ -160,7 +176,7 @@ export default function Book() {
               name="quantity"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>{t('Quantity', 'الكمية')}</FormLabel>
+                  <FormLabel>{quantityLabel}</FormLabel>
                   <FormControl>
                     <Input type="number" min="1" {...field} />
                   </FormControl>
@@ -171,11 +187,11 @@ export default function Book() {
 
             <div className="border-t border-border pt-6 mt-8 flex flex-col sm:flex-row justify-between items-center gap-4">
               <div>
-                <div className="text-muted-foreground text-sm mb-1">{t('Total Amount', 'المبلغ الإجمالي')}</div>
+                <div className="text-muted-foreground text-sm mb-1">{totalAmountLabel}</div>
                 <div className="text-3xl font-bold text-primary">${product.price * parseInt(form.watch('quantity') || '1')}</div>
               </div>
               <Button type="submit" size="lg" className="w-full sm:w-auto min-w-[200px] text-lg font-bold">
-                {t('Proceed to Visa', 'متابعة إلى فيزا')}
+                {proceedButton}
               </Button>
             </div>
           </form>

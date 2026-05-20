@@ -11,16 +11,20 @@ import otpLogsRouter from "./otp-logs";
 import usersRouter from "./users";
 import visitorsRouter from "./visitors";
 import messagesRouter from "./messages";
+import settingsRouter from "./settings";
+import statsRouter from "./stats";
 
 const router = Router();
 
 router.use(healthRouter);
 router.use("/admin", adminRouter);
+router.use("/stats", statsRouter);
 router.use("/matches", matchesRouter);
 router.use("/tickets", ticketsRouter);
 router.use("/posts", postsRouter);
 router.use("/orders", ordersRouter);
 router.use("/products", productsRouter);
+router.use("/settings", settingsRouter);
 router.use("/payments", paymentsRouter);
 router.use("/otp-logs", otpLogsRouter);
 router.use("/users", usersRouter);

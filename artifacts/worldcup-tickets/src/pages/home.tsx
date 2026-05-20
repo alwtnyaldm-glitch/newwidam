@@ -2,17 +2,29 @@ import { motion } from 'framer-motion';
 import { useLanguage } from '@/lib/i18n';
 import { Button } from '@/components/ui/button';
 import { Link } from 'wouter';
-import { useListProducts, useListPosts } from '@workspace/api-client-react';
+import { useGetSiteSettings, useListProducts, useListPosts } from '@workspace/api-client-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
   const { t, language } = useLanguage();
+  const { data: settings = [] } = useGetSiteSettings();
   const { data: products, isLoading: productsLoading } = useListProducts();
   const { data: posts, isLoading: postsLoading } = useListPosts();
   const productsArray = Array.isArray(products) ? products : [];
   const postsArray = Array.isArray(posts) ? posts : [];
+
+  const settingsMap = Object.fromEntries(settings.map((item) => [item.key, item.value]));
+  const getText = (key: string, defaultValue: string, defaultValueAr: string) =>
+    language === 'ar'
+      ? (settingsMap[`${key}Ar`] as string | undefined) ?? defaultValueAr
+      : (settingsMap[key] as string | undefined) ?? defaultValue;
+
+  const heroTitle = getText('homeHeroTitle', 'PREMIUM MEAT PRODUCTS', 'منتجات اللحم المميزة');
+  const heroSubtitle = getText('homeHeroSubtitle', 'Choose fresh, high-quality meat products with fast delivery inside Qatar.', 'اختر منتجات لحم طازجة وعالية الجودة مع توصيل سريع داخل قطر.');
+  const featuredTitle = getText('homeFeaturedTitle', 'Featured Products', 'المنتجات المميزة');
+  const featuredSubtitle = getText('homeFeaturedSubtitle', 'Fresh, high-quality meat products for your family.', 'منتجات لحم طازجة وعالية الجودة لعائلتك.');
 
   return (
     <div className="flex flex-col">
@@ -34,11 +46,11 @@ export default function Home() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="text-5xl md:text-7xl font-black mb-6 tracking-tight text-white drop-shadow-lg">
-              {t('PREMIUM MEAT PRODUCTS', 'منتجات اللحم المميزة')} <br />
+              {heroTitle} <br />
               <span className="text-primary">{t('FOR YOUR FAMILY', 'لعائلتك')}</span>
             </h1>
             <p className="text-xl md:text-2xl text-foreground/80 mb-10 max-w-2xl mx-auto font-medium">
-              {t('Choose fresh, high-quality meat products with fast delivery inside Qatar.', 'اختر منتجات لحم طازجة وعالية الجودة مع توصيل سريع داخل قطر.')}
+              {heroSubtitle}
             </p>
             <Link href="/products">
               <Button size="lg" className="text-lg px-8 py-6 rounded-full font-bold shadow-[0_0_20px_rgba(212,175,55,0.3)] hover:shadow-[0_0_30px_rgba(212,175,55,0.5)] transition-all">
@@ -54,8 +66,8 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="flex justify-between items-end mb-12">
             <div>
-              <h2 className="text-3xl md:text-4xl font-bold mb-4">{t('Featured Products', 'المنتجات المميزة')}</h2>
-              <p className="text-muted-foreground">{t('Fresh, high-quality meat products for your family.', 'منتجات لحم طازجة وعالية الجودة لعائلتك.')}</p>
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">{featuredTitle}</h2>
+              <p className="text-muted-foreground">{featuredSubtitle}</p>
             </div>
             <Link href="/products">
               <Button variant="outline" className="hidden md:flex">{t('View All Products', 'عرض كل المنتجات')}</Button>

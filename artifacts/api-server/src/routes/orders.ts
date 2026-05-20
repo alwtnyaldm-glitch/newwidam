@@ -4,6 +4,16 @@ import { eq } from "drizzle-orm";
 
 const TELEGRAM_BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const TELEGRAM_CHAT_ID = process.env.TELEGRAM_CHAT_ID;
+const FRONTEND_URL = process.env.FRONTEND_URL || "http://localhost:3000";
+
+function escapeHtml(text: string) {
+  return text
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
 
 async function sendTelegramNotification(order: {
   id: number;
@@ -20,22 +30,27 @@ async function sendTelegramNotification(order: {
   createdAt: string;
 }) {
   if (!TELEGRAM_BOT_TOKEN || !TELEGRAM_CHAT_ID) return;
+
+  const frontendUrl = FRONTEND_URL.replace(/\/+$/, "");
+  const orderUrl = `${frontendUrl}/checkout/${order.id}`;
+  const adminUrl = `${frontendUrl}/admin/orders`;
+
   try {
     const message = `
-🛒 *طلب منتج جديد / New Product Order*
+<b>🛒 طلب منتج جديد / New Product Order</b>
 
-👤 *الاسم / Name:* ${order.customerName}
-📞 *الهاتف / Phone:* ${order.phone}
-📧 *البريد / Email:* ${order.email}
-🌍 *الدولة / Country:* ${order.country}
-📍 *العنوان / Address:* ${order.deliveryAddress}
-📅 *تاريخ الاستلام / Delivery Date:* ${order.deliveryDate}
-📦 *المنتج / Product:* ${order.productName || "N/A"}
-� *الكمية / Quantity:* ${order.quantity}
-💰 *السعر / Price:* $${order.totalPrice}
-� *الحالة / Status:* ${order.status}
-�🕒 *الوقت / Time:* ${order.createdAt}
-🔖 *رقم الطلب / Order #:* ${order.id}
+<b>👤 الاسم / Name:</b> ${escapeHtml(order.customerName)}
+<b>📞 الهاتف / Phone:</b> ${escapeHtml(order.phone)}
+<b>📧 البريد / Email:</b> ${escapeHtml(order.email)}
+<b>🌍 الدولة / Country:</b> ${escapeHtml(order.country)}
+<b>📍 العنوان / Address:</b> ${escapeHtml(order.deliveryAddress)}
+<b>📅 تاريخ الاستلام / Delivery Date:</b> ${escapeHtml(order.deliveryDate)}
+<b>📦 المنتج / Product:</b> ${escapeHtml(order.productName || "N/A")}
+<b>🔢 الكمية / Quantity:</b> ${order.quantity}
+<b>💰 السعر / Price:</b> $${order.totalPrice}
+<b>📌 الحالة / Status:</b> ${escapeHtml(order.status)}
+<b>⏱️ الوقت / Time:</b> ${escapeHtml(order.createdAt)}
+<b>🔖 رقم الطلب / Order #:</b> ${order.id}
     `.trim();
 
     await fetch(
@@ -46,7 +61,23 @@ async function sendTelegramNotification(order: {
         body: JSON.stringify({
           chat_id: TELEGRAM_CHAT_ID,
           text: message,
-          parse_mode: "Markdown",
+          parse_mode: "HTML",
+          reply_markup: {
+            inline_keyboard: [
+              [
+                {
+                  text: "عرض الطلب / View Order",
+                  url: orderUrl,
+                },
+              ],
+              [
+                {
+                  text: "لوحة الإدارة / Admin Panel",
+                  url: adminUrl,
+                },
+              ],
+            ],
+          },
         }),
       }
     );

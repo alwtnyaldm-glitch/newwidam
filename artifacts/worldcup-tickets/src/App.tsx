@@ -25,6 +25,7 @@ import AdminOrders from "@/pages/admin/orders";
 import AdminPosts from "@/pages/admin/posts";
 import AdminTickets from "@/pages/admin/tickets";
 import AdminProducts from "@/pages/admin/products";
+import AdminEditor from "@/pages/admin/edetor";
 import AdminUsers from "@/pages/admin/users";
 import AdminVisitors from "@/pages/admin/visitors";
 import AdminMessages from "@/pages/admin/messages";
@@ -54,6 +55,12 @@ function Router() {
       <Route path="/admin/login" component={AdminLogin} />
       <Route path="/admin/products">
         <AdminGuard><AdminProducts /></AdminGuard>
+      </Route>
+      <Route path="/admin/edetor">
+        <AdminGuard><AdminEditor /></AdminGuard>
+      </Route>
+      <Route path="/edetor">
+        <AdminGuard><AdminEditor /></AdminGuard>
       </Route>
       <Route path="/admin/users">
         <AdminGuard><AdminUsers /></AdminGuard>

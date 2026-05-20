@@ -8,6 +8,7 @@ import * as schema from "./schema";
 import { matchesTable, ticketsTable, usersTable, adminSessionsTable } from "./schema";
 import { productsTable } from "./schema/products";
 import { postsTable } from "./schema/posts";
+import { siteSettingsTable } from "./schema/site-settings";
 import { eq } from "drizzle-orm";
 
 const sqliteFile = process.env.DATABASE_FILE ?? path.resolve(process.cwd(), "data", "database.sqlite");
@@ -123,6 +124,11 @@ if (usePostgres) {
         image TEXT,
         is_published INTEGER NOT NULL DEFAULT 0,
         created_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))
+      );
+      CREATE TABLE IF NOT EXISTS site_settings (
+        key TEXT PRIMARY KEY,
+        value TEXT NOT NULL,
+        updated_at INTEGER NOT NULL DEFAULT (strftime('%s','now'))
       );
       CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,

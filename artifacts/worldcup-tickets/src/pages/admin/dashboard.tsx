@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { Link } from 'wouter';
 import { Button } from '@/components/ui/button';
-import { LayoutDashboard, Ticket, Trophy, FileText, ShoppingCart, LogOut, Package } from 'lucide-react';
+import { LayoutDashboard, Ticket, Trophy, FileText, ShoppingCart, LogOut, Package, Edit3 } from 'lucide-react';
 import { format } from 'date-fns';
 
 export function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -29,6 +29,11 @@ export function AdminLayout({ children }: { children: React.ReactNode }) {
           <Link href="/admin/products">
             <Button variant="ghost" className="w-full justify-start text-left font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary">
               <Package className="mr-2 h-4 w-4" /> Products
+            </Button>
+          </Link>
+          <Link href="/admin/edetor">
+            <Button variant="ghost" className="w-full justify-start text-left font-medium text-slate-600 dark:text-slate-400 hover:text-primary dark:hover:text-primary">
+              <Edit3 className="mr-2 h-4 w-4" /> Editor
             </Button>
           </Link>
           <Link href="/admin/users">
