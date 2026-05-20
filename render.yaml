@@ -3,8 +3,10 @@ services:
     name: worldcup-fullstack
     env: node
     rootDirectory: .
-    buildCommand: pnpm install && pnpm run build
+    buildCommand: pnpm install --frozen-lockfile && pnpm run build
     startCommand: pnpm run start
     envVars:
       - key: BASE_PATH
         value: "/"
+      - key: NODE_ENV
+        value: "production"

@@ -2,6 +2,8 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { seedDefaultMatches, seedDefaultProducts, seedDefaultAdminUser } from "@workspace/db";
 
+process.env.NODE_ENV ||= "production";
+
 const rawPort = process.env["PORT"] ?? "3001";
 const port = Number(rawPort);
 
