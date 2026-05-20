@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: worldcup-fullstack
+    env: node
+    rootDirectory: .
+    buildCommand: pnpm install && pnpm run build
+    startCommand: pnpm run start
+    envVars:
+      - key: BASE_PATH
+        value: "/"
