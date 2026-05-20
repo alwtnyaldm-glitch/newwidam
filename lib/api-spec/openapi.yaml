@@ -1,0 +1,883 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: World Cup Tickets API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: matches
+    description: Match operations
+  - name: tickets
+    description: Ticket operations
+  - name: orders
+    description: Order operations
+  - name: posts
+    description: Post/News operations
+  - name: admin
+    description: Admin operations
+  - name: stats
+    description: Stats and summary operations
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /matches:
+    get:
+      operationId: listMatches
+      tags: [matches]
+      summary: List all matches
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [date, price]
+        - name: sortOrder
+          in: query
+          schema:
+            type: string
+            enum: [asc, desc]
+      responses:
+        "200":
+          description: List of matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+    post:
+      operationId: createMatch
+      tags: [matches]
+      summary: Create a new match (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchInput"
+      responses:
+        "201":
+          description: Created match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+
+  /matches/{id}:
+    get:
+      operationId: getMatch
+      tags: [matches]
+      summary: Get match by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Match details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+    patch:
+      operationId: updateMatch
+      tags: [matches]
+      summary: Update a match (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/MatchUpdate"
+      responses:
+        "200":
+          description: Updated match
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Match"
+    delete:
+      operationId: deleteMatch
+      tags: [matches]
+      summary: Delete a match (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /matches/{id}/tickets:
+    get:
+      operationId: listMatchTickets
+      tags: [tickets]
+      summary: List tickets for a match
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of tickets
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Ticket"
+
+  /tickets:
+    post:
+      operationId: createTicket
+      tags: [tickets]
+      summary: Create ticket (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketInput"
+      responses:
+        "201":
+          description: Created ticket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+
+  /tickets/{id}:
+    patch:
+      operationId: updateTicket
+      tags: [tickets]
+      summary: Update ticket (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TicketUpdate"
+      responses:
+        "200":
+          description: Updated ticket
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Ticket"
+    delete:
+      operationId: deleteTicket
+      tags: [tickets]
+      summary: Delete ticket (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /orders:
+    get:
+      operationId: listOrders
+      tags: [orders]
+      summary: List all orders (admin)
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, confirmed, cancelled]
+      responses:
+        "200":
+          description: List of orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+    post:
+      operationId: createOrder
+      tags: [orders]
+      summary: Create a new order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderInput"
+      responses:
+        "201":
+          description: Created order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /orders/{id}:
+    get:
+      operationId: getOrder
+      tags: [orders]
+      summary: Get order by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Order details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+    patch:
+      operationId: updateOrder
+      tags: [orders]
+      summary: Update order status (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/OrderUpdate"
+      responses:
+        "200":
+          description: Updated order
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+
+  /posts:
+    get:
+      operationId: listPosts
+      tags: [posts]
+      summary: List all posts/news
+      responses:
+        "200":
+          description: List of posts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Post"
+    post:
+      operationId: createPost
+      tags: [posts]
+      summary: Create a post (admin)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostInput"
+      responses:
+        "201":
+          description: Created post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+
+  /posts/{id}:
+    patch:
+      operationId: updatePost
+      tags: [posts]
+      summary: Update a post (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PostUpdate"
+      responses:
+        "200":
+          description: Updated post
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Post"
+    delete:
+      operationId: deletePost
+      tags: [posts]
+      summary: Delete a post (admin)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /admin/login:
+    post:
+      operationId: adminLogin
+      tags: [admin]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminLoginInput"
+      responses:
+        "200":
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuthResult"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /stats/summary:
+    get:
+      operationId: getStatsSummary
+      tags: [stats]
+      summary: Get dashboard summary stats
+      responses:
+        "200":
+          description: Summary stats
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/StatsSummary"
+
+  /stats/recent-orders:
+    get:
+      operationId: getRecentOrders
+      tags: [stats]
+      summary: Get recent orders for dashboard
+      responses:
+        "200":
+          description: Recent orders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Order"
+
+  /stats/featured-matches:
+    get:
+      operationId: getFeaturedMatches
+      tags: [stats]
+      summary: Get featured/upcoming matches for homepage
+      responses:
+        "200":
+          description: Featured matches
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Match"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      required:
+        - error
+
+    Match:
+      type: object
+      properties:
+        id:
+          type: integer
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        homeTeamAr:
+          type: string
+        awayTeamAr:
+          type: string
+        homeTeamFlag:
+          type: ["string", "null"]
+        awayTeamFlag:
+          type: ["string", "null"]
+        stadium:
+          type: string
+        stadiumAr:
+          type: string
+        city:
+          type: string
+        cityAr:
+          type: string
+        matchDate:
+          type: string
+        image:
+          type: ["string", "null"]
+        description:
+          type: ["string", "null"]
+        descriptionAr:
+          type: ["string", "null"]
+        stage:
+          type: string
+        stageAr:
+          type: string
+        minPrice:
+          type: number
+        isActive:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - homeTeam
+        - awayTeam
+        - homeTeamAr
+        - awayTeamAr
+        - stadium
+        - stadiumAr
+        - city
+        - cityAr
+        - matchDate
+        - stage
+        - stageAr
+        - minPrice
+        - isActive
+        - createdAt
+
+    MatchInput:
+      type: object
+      properties:
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        homeTeamAr:
+          type: string
+        awayTeamAr:
+          type: string
+        homeTeamFlag:
+          type: string
+        awayTeamFlag:
+          type: string
+        stadium:
+          type: string
+        stadiumAr:
+          type: string
+        city:
+          type: string
+        cityAr:
+          type: string
+        matchDate:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        descriptionAr:
+          type: string
+        stage:
+          type: string
+        stageAr:
+          type: string
+        minPrice:
+          type: number
+        isActive:
+          type: boolean
+      required:
+        - homeTeam
+        - awayTeam
+        - homeTeamAr
+        - awayTeamAr
+        - stadium
+        - stadiumAr
+        - city
+        - cityAr
+        - matchDate
+        - stage
+        - stageAr
+        - minPrice
+
+    MatchUpdate:
+      type: object
+      properties:
+        homeTeam:
+          type: string
+        awayTeam:
+          type: string
+        homeTeamAr:
+          type: string
+        awayTeamAr:
+          type: string
+        homeTeamFlag:
+          type: string
+        awayTeamFlag:
+          type: string
+        stadium:
+          type: string
+        stadiumAr:
+          type: string
+        city:
+          type: string
+        cityAr:
+          type: string
+        matchDate:
+          type: string
+        image:
+          type: string
+        description:
+          type: string
+        descriptionAr:
+          type: string
+        stage:
+          type: string
+        stageAr:
+          type: string
+        minPrice:
+          type: number
+        isActive:
+          type: boolean
+
+    Ticket:
+      type: object
+      properties:
+        id:
+          type: integer
+        matchId:
+          type: integer
+        category:
+          type: string
+        categoryAr:
+          type: string
+        seatNumber:
+          type: string
+        section:
+          type: string
+        row:
+          type: ["string", "null"]
+        price:
+          type: number
+        status:
+          type: string
+          enum: [available, reserved, sold]
+        createdAt:
+          type: string
+      required:
+        - id
+        - matchId
+        - category
+        - categoryAr
+        - seatNumber
+        - section
+        - price
+        - status
+        - createdAt
+
+    TicketInput:
+      type: object
+      properties:
+        matchId:
+          type: integer
+        category:
+          type: string
+        categoryAr:
+          type: string
+        seatNumber:
+          type: string
+        section:
+          type: string
+        row:
+          type: string
+        price:
+          type: number
+      required:
+        - matchId
+        - category
+        - categoryAr
+        - seatNumber
+        - section
+        - price
+
+    TicketUpdate:
+      type: object
+      properties:
+        category:
+          type: string
+        categoryAr:
+          type: string
+        seatNumber:
+          type: string
+        section:
+          type: string
+        row:
+          type: string
+        price:
+          type: number
+        status:
+          type: string
+          enum: [available, reserved, sold]
+
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+        customerName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        country:
+          type: string
+        notes:
+          type: ["string", "null"]
+        matchId:
+          type: integer
+        matchName:
+          type: ["string", "null"]
+        selectedSeats:
+          type: string
+        totalPrice:
+          type: number
+        paymentStatus:
+          type: string
+          enum: [pending, confirmed, cancelled]
+        createdAt:
+          type: string
+      required:
+        - id
+        - customerName
+        - phone
+        - email
+        - country
+        - matchId
+        - selectedSeats
+        - totalPrice
+        - paymentStatus
+        - createdAt
+
+    OrderInput:
+      type: object
+      properties:
+        customerName:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        country:
+          type: string
+        notes:
+          type: string
+        matchId:
+          type: integer
+        selectedSeats:
+          type: string
+        totalPrice:
+          type: number
+      required:
+        - customerName
+        - phone
+        - email
+        - country
+        - matchId
+        - selectedSeats
+        - totalPrice
+
+    OrderUpdate:
+      type: object
+      properties:
+        paymentStatus:
+          type: string
+          enum: [pending, confirmed, cancelled]
+
+    Post:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        titleAr:
+          type: string
+        content:
+          type: string
+        contentAr:
+          type: string
+        image:
+          type: ["string", "null"]
+        isPublished:
+          type: boolean
+        createdAt:
+          type: string
+      required:
+        - id
+        - title
+        - titleAr
+        - content
+        - contentAr
+        - isPublished
+        - createdAt
+
+    PostInput:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: string
+        content:
+          type: string
+        contentAr:
+          type: string
+        image:
+          type: string
+        isPublished:
+          type: boolean
+      required:
+        - title
+        - titleAr
+        - content
+        - contentAr
+
+    PostUpdate:
+      type: object
+      properties:
+        title:
+          type: string
+        titleAr:
+          type: string
+        content:
+          type: string
+        contentAr:
+          type: string
+        image:
+          type: string
+        isPublished:
+          type: boolean
+
+    AdminLoginInput:
+      type: object
+      properties:
+        username:
+          type: string
+        password:
+          type: string
+      required:
+        - username
+        - password
+
+    AdminAuthResult:
+      type: object
+      properties:
+        token:
+          type: string
+        message:
+          type: string
+      required:
+        - token
+        - message
+
+    StatsSummary:
+      type: object
+      properties:
+        totalMatches:
+          type: integer
+        totalOrders:
+          type: integer
+        pendingOrders:
+          type: integer
+        confirmedOrders:
+          type: integer
+        cancelledOrders:
+          type: integer
+        totalRevenue:
+          type: number
+        availableTickets:
+          type: integer
+        totalPosts:
+          type: integer
+      required:
+        - totalMatches
+        - totalOrders
+        - pendingOrders
+        - confirmedOrders
+        - cancelledOrders
+        - totalRevenue
+        - availableTickets
+        - totalPosts

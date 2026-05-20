@@ -1,0 +1,14 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "KC9xpiEuAbXBTGlnwwFNS"
+uri = "file://artifacts/worldcup-tickets/public/hero.png"
+type = "image"
+title = "Homepage hero banner"
+
+[[generated]]
+id = "Mpviau4hKtuLWgO7LDe8E"
+uri = "file://artifacts/worldcup-tickets/public/match-bg.png"
+type = "image"
+title = "Match card placeholder"
