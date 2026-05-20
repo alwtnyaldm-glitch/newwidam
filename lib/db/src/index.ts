@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 const sqliteFile = process.env.DATABASE_FILE ?? path.resolve(process.cwd(), "data", "database.sqlite");
 const usePostgres = Boolean(process.env.DATABASE_URL);
 
-let db;
+let db: any;
 
 if (usePostgres) {
   const { Pool } = pg;

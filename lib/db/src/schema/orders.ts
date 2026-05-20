@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 import { productsTable } from "./products";
 
 export const ordersTable = sqliteTable("orders", {
-  id: integer("id").primaryKey({ mode: "autoincrement" }),
+  id: integer("id").primaryKey(),
   customerName: text("customer_name").notNull(),
   phone: text("phone").notNull(),
   email: text("email").notNull(),

@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 export const matchesTable = sqliteTable("matches", {
-  id: integer("id").primaryKey({ mode: "autoincrement" }),
+  id: integer("id").primaryKey(),
   homeTeam: text("home_team").notNull(),
   awayTeam: text("away_team").notNull(),
   homeTeamAr: text("home_team_ar").notNull(),

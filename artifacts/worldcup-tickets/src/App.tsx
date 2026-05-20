@@ -62,7 +62,7 @@ function Router() {
         <AdminGuard><AdminUsers /></AdminGuard>
       </Route>
       <Route path="/admin/visitors">
-        <AdminGuard><AdminVisitors /></AdminVisitors>
+        <AdminGuard><AdminVisitors /></AdminGuard>
       </Route>
       <Route path="/admin/messages">
         <AdminGuard><AdminMessages /></AdminGuard>

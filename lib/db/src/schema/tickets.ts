@@ -4,7 +4,7 @@ import { z } from "zod/v4";
 import { matchesTable } from "./matches";
 
 export const ticketsTable = sqliteTable("tickets", {
-  id: integer("id").primaryKey({ mode: "autoincrement" }),
+  id: integer("id").primaryKey(),
   matchId: integer("match_id").notNull().references(() => matchesTable.id, { onDelete: "cascade" }),
   category: text("category").notNull(),
   categoryAr: text("category_ar").notNull(),

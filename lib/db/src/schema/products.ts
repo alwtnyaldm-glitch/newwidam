@@ -3,7 +3,7 @@ import { createInsertSchema } from "drizzle-zod";
 import { z } from "zod/v4";
 
 export const productsTable = sqliteTable("products", {
-  id: integer("id").primaryKey({ mode: "autoincrement" }),
+  id: integer("id").primaryKey(),
   title: text("title").notNull(),
   titleAr: text("title_ar").notNull(),
   description: text("description"),
