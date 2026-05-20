@@ -1,4 +1,5 @@
-import { Switch, Route, Router as WouterRouter } from "wouter";
+import { useEffect } from "react";
+import { Switch, Route, Router as WouterRouter, useLocation } from "wouter";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -33,6 +34,16 @@ const queryClient = new QueryClient();
 // Create a component that wraps public routes with the Layout
 function PublicLayout({ children }: { children: React.ReactNode }) {
   return <Layout>{children}</Layout>;
+}
+
+function Redirect({ to }: { to: string }) {
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    setLocation(to);
+  }, [to, setLocation]);
+
+  return null;
 }
 
 function Router() {
@@ -73,6 +84,10 @@ function Router() {
       </Route>
 
       {/* Public routes */}
+      <Route path="/products" component={Home} />
+      <Route path="/">
+        <Redirect to="/products" />
+      </Route>
       <Route>
         <PublicLayout>
           <Switch>
