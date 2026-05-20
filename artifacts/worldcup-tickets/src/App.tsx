@@ -52,10 +52,6 @@ function Router() {
     <Switch>
       {/* Admin routes (no public layout) */}
       <Route path="/admin/login" component={AdminLogin} />
-      
-      <Route path="/admin">
-        <AdminGuard><AdminDashboard /></AdminGuard>
-      </Route>
       <Route path="/admin/products">
         <AdminGuard><AdminProducts /></AdminGuard>
       </Route>
@@ -82,6 +78,9 @@ function Router() {
       </Route>
       <Route path="/admin/posts">
         <AdminGuard><AdminPosts /></AdminGuard>
+      </Route>
+      <Route path="/admin">
+        <AdminGuard><AdminDashboard /></AdminGuard>
       </Route>
 
       {/* Public routes */}

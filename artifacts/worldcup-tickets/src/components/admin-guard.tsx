@@ -10,6 +10,7 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
     async function validate() {
       const token = localStorage.getItem('admin_token');
       if (!token) {
+        setIsChecking(false);
         setLocation('/admin/login');
         return;
       }
@@ -21,11 +22,13 @@ export function AdminGuard({ children }: { children: React.ReactNode }) {
 
         if (!response.ok) {
           localStorage.removeItem('admin_token');
+          setIsChecking(false);
           setLocation('/admin/login');
           return;
         }
       } catch {
         localStorage.removeItem('admin_token');
+        setIsChecking(false);
         setLocation('/admin/login');
         return;
       }
