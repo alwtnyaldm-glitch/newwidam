@@ -14,7 +14,7 @@ function getAdminToken(req: any) {
   return parts[1];
 }
 
-router.post("/admin/login", async (req, res) => {
+router.post("/login", async (req, res) => {
   try {
     const parsed = AdminLoginBody.safeParse(req.body);
     if (!parsed.success) {
@@ -50,7 +50,7 @@ router.post("/admin/login", async (req, res) => {
   }
 });
 
-router.get("/admin/validate", async (req, res) => {
+router.get("/validate", async (req, res) => {
   try {
     const token = getAdminToken(req);
     if (!token) return res.status(401).json({ error: "Missing token" });
@@ -70,7 +70,7 @@ router.get("/admin/validate", async (req, res) => {
   }
 });
 
-router.post("/admin/change-password", async (req, res) => {
+router.post("/change-password", async (req, res) => {
   try {
     const token = getAdminToken(req);
     if (!token) return res.status(401).json({ error: "Missing token" });
@@ -115,7 +115,7 @@ router.post("/admin/change-password", async (req, res) => {
   }
 });
 
-router.post("/admin/logout-all", async (req, res) => {
+router.post("/logout-all", async (req, res) => {
   try {
     const token = getAdminToken(req);
     if (!token) return res.status(401).json({ error: "Missing token" });
