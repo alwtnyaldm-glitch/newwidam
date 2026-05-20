@@ -7,6 +7,7 @@ import { LanguageProvider } from "@/lib/i18n";
 import { Layout } from "@/components/layout";
 import { AdminGuard } from "@/components/admin-guard";
 import Home from "@/pages/home";
+import Products from "@/pages/products";
 import Matches from "@/pages/matches";
 import MatchDetail from "@/pages/match-detail";
 import Seats from "@/pages/seats";
@@ -84,7 +85,7 @@ function Router() {
       </Route>
 
       {/* Public routes */}
-      <Route path="/products" component={Home} />
+      <Route path="/products" component={Products} />
       <Route path="/">
         <Redirect to="/products" />
       </Route>
